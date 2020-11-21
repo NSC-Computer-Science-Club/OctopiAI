@@ -6,8 +6,8 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 
 
-IMG_WIDTH = 50 # Width of the image
-IMG_HEIGHT = 50 # Height of the image
+IMG_WIDTH = 100 # Width of the image
+IMG_HEIGHT = 100 # Height of the image
 
 def load_data(data_dir, num_categories):
     """

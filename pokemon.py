@@ -24,8 +24,8 @@ POKEMON = ["Charizard", "Turtwig", "Chimchar", "Piplup"]
 NUM_CATEGORIES = len(POKEMON)
 
 # Stuff for the neural network
-EPOCHS = 30 # How many times the network "learns"
-TEST_SIZE = 0.4 # How much of the data we use for testing
+EPOCHS = 100 # How many times the network "learns"
+TEST_SIZE = 0.4 # How much of the data we use for testing (originally 0.4)
 
 def main():
     # Get image arrays and labels for all image files
@@ -68,7 +68,8 @@ def main():
         model.evaluate(x_test,  y_test, verbose=1)
 
     if PREDICT:
-        predict(model)
+        while (True):
+            predict(model)
 
 def predict(model):
     # Make sure user input is good
@@ -100,17 +101,17 @@ def predict(model):
     prediction_category = POKEMON[prediction_index]
         
     print("Prediction: " + prediction_category)
-    print("Images are displayed in a separate window")
     
     # Display an image of the prediction vs actual
-    directory: str = os.path.join(DATA_DIRECTORY, str(prediction_index), "0.jpg")
-    prediction_image = cv2.imread(directory)
-    prediction_image = cv2.resize(prediction_image, (100, 100))
-    actual_image = cv2.resize(actual_image, (100, 100))
-    both_images = np.hstack((prediction_image, actual_image))
-    cv2.imshow("Prediction vs Actual", both_images)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
+    #print("Images are displayed in a separate window")
+    #directory: str = os.path.join(DATA_DIRECTORY, str(prediction_index), "0.jpg")
+    #prediction_image = cv2.imread(directory)
+    #prediction_image = cv2.resize(prediction_image, (100, 100))
+    #actual_image = cv2.resize(actual_image, (100, 100))
+    #both_images = np.hstack((prediction_image, actual_image))
+    #cv2.imshow("Prediction vs Actual", both_images)
+    #cv2.waitKey()
+    #cv2.destroyAllWindows()
 
 # Play around with this!
 # https://www.tensorflow.org/guide/keras/sequential_model
