@@ -1,3 +1,7 @@
+# Dependencies:
+# opencv-python
+# scikit-learn
+# tensorflow
 import cv2
 import numpy as np
 import os
@@ -8,11 +12,6 @@ from sklearn.model_selection import train_test_split
 
 from image_loader import *
 
-# Dependencies:
-# opencv-python
-# scikit-learn
-# tensorflow
-
 SAVE_MODEL = True
 LOAD_MODEL = False
 MODEL_NAME = "model.h5"
@@ -20,7 +19,7 @@ EVALUATE = True # Evaluate how accurate the model is on the test data
 PREDICT = True # Use the model to make a prediction on one image
 
 DATA_DIRECTORY = "pokemon"
-POKEMON = ["Charizard", "Turtwig", "Chimchar", "Piplup"]
+POKEMON = ["Charizard", "Turtwig", "Chimchar", "Piplup", "Dedenne"]
 NUM_CATEGORIES = len(POKEMON)
 
 # Stuff for the neural network
@@ -99,7 +98,7 @@ def predict(model):
             prediction_index = i
             
     prediction_category = POKEMON[prediction_index]
-        
+    
     print("Prediction: " + prediction_category)
     
     # Display an image of the prediction vs actual
