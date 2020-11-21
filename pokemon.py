@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import os
-import random
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -16,20 +15,17 @@ from image_loader import *
 
 SAVE_MODEL = True
 LOAD_MODEL = False
-SAVE_MODEL_NAME = "model.h5"
-LOAD_MODEL_NAME = "model_small_dataset.h5"
-USING_POKEMON_DIR = True
+MODEL_NAME = "model.h5"
 EVALUATE = True # Evaluate how accurate the model is on the test data
 PREDICT = True # Use the model to make a prediction on one image
 
-DATA_DIRECTORY = "/Users/chungmcl/Projects/AI_for_Octopi/pokemon"
-NUM_CATEGORIES = 3
+DATA_DIRECTORY = "pokemon"
+POKEMON = ["Charizard", "Turtwig", "Chimchar", "Piplup"]
+NUM_CATEGORIES = len(POKEMON)
 
 # Stuff for the neural network
-EPOCHS = 200 # How many times the network "learns"
+EPOCHS = 30 # How many times the network "learns"
 TEST_SIZE = 0.4 # How much of the data we use for testing
-
-POKEMON = ["Piplup", "Chimchar", "Turtwig"]
 
 def main():
     # Get image arrays and labels for all image files
@@ -47,7 +43,7 @@ def main():
     if LOAD_MODEL:
         # Load saved model
         print("Loading model...")
-        model = keras.models.load_model(LOAD_MODEL_NAME)
+        model = keras.models.load_model(MODEL_NAME)
         # Show a summary of the model
         print("Model summary:")
         model.summary()
@@ -61,6 +57,10 @@ def main():
         # Fit model on training data
         print("Training model...")
         model.fit(x_train, y_train, epochs=EPOCHS)
+        # Save model to file
+        if SAVE_MODEL:
+            model.save(MODEL_NAME)
+            print(f"Model saved to {MODEL_NAME}.")
 
     if EVALUATE:
         # Evaluate neural network performance
@@ -68,51 +68,49 @@ def main():
         model.evaluate(x_test,  y_test, verbose=1)
 
     if PREDICT:
-        # Make sure user input is good
-        good_input: bool = False
-        index: int = 0
-        actual_image_path: str = ""
-        while not good_input:
-            print("Possible predictions: ")
-            for i in range(len(POKEMON)):
-                print(str(i) + ". " + POKEMON[i])
-            actual_image_path: str = input("Enter the path of the image to predict: ")
-            if os.path.isfile(actual_image_path) and any(extension in actual_image_path for extension in [".jpg", ".jpeg", ".png"]):
-                good_input = True
-            else:
-                print("Path/file is invalid. Did you enter the path correctly? (Note: Accepts JPGs and PNGs only.)")
-        
-        actual_image = load_one_image(actual_image_path)
+        predict(model)
 
-        # Make prediction on that image
-        prediction_list = model.predict(np.array([actual_image]))
-        prediction = prediction_list[0]
-        prediction_index = 0
-        prediction_category = ""
-        
-        # Display Information for prediction vs actual
-        for i in range(NUM_CATEGORIES):
-            if prediction[i] > 0.99:
-                prediction_index = i
-                prediction_category = POKEMON[i]
+def predict(model):
+    # Make sure user input is good
+    good_input: bool = False
+    actual_image_path: str = ""
+    while not good_input:
+        print("\nPossible pokemon to make predictions on: ")
+        for mon in POKEMON:
+            print(mon)
+        actual_image_path: str = input("Enter the path of the image to predict: ")
+        if os.path.isfile(actual_image_path) and any(extension in actual_image_path for extension in [".jpg", ".jpeg", ".png"]):
+            good_input = True
+        else:
+            print("Path/file is invalid. Did you enter the path correctly? (Note: Accepts JPGs and PNGs only.)")
+    
+    actual_image = load_one_image(actual_image_path)
+    # Make prediction on that image
+    prediction_list = model.predict(np.array([actual_image]))
+    prediction = prediction_list[0]
+    prediction_index = 0
+    top_prediction = 0
+    
+    # Display Information for prediction vs actual
+    for i in range(NUM_CATEGORIES):
+        if prediction[i] > top_prediction:
+            top_prediction = prediction[i]
+            prediction_index = i
             
-        print("Prediction: " + prediction_category)
-        print("Images are displayed in a separate window")
+    prediction_category = POKEMON[prediction_index]
         
-        # Display an image of the prediction vs actual
-        directory: str = os.path.join(DATA_DIRECTORY, str(POKEMON.index(prediction_category)), str(prediction_index) + ".jpg")
-        prediction_image = cv2.imread(directory)
-        prediction_image = cv2.resize(prediction_image, (100, 100))
-        actual_image = cv2.resize(actual_image, (100, 100))
-        both_images = np.hstack((prediction_image, actual_image))
-        cv2.imshow("Prediction vs Actual", both_images)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
-
-    # Save model to file
-    if SAVE_MODEL:
-        model.save(SAVE_MODEL_NAME)
-        print(f"Model saved to {SAVE_MODEL_NAME}.")
+    print("Prediction: " + prediction_category)
+    print("Images are displayed in a separate window")
+    
+    # Display an image of the prediction vs actual
+    directory: str = os.path.join(DATA_DIRECTORY, str(prediction_index), "0.jpg")
+    prediction_image = cv2.imread(directory)
+    prediction_image = cv2.resize(prediction_image, (100, 100))
+    actual_image = cv2.resize(actual_image, (100, 100))
+    both_images = np.hstack((prediction_image, actual_image))
+    cv2.imshow("Prediction vs Actual", both_images)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
 
 # Play around with this!
 # https://www.tensorflow.org/guide/keras/sequential_model
