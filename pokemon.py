@@ -19,6 +19,7 @@ EVALUATE = True # Evaluate how accurate the model is on the test data
 PREDICT = True # Use the model to make a prediction on one image
 
 DATA_DIRECTORY = "pokemon"
+# DEFAULT: "Charizard", "Turtwig", "Chimchar", "Piplup", "Dedenne"
 POKEMON = ["Charizard", "Turtwig", "Chimchar", "Piplup", "Dedenne"]
 NUM_CATEGORIES = len(POKEMON)
 
@@ -99,7 +100,11 @@ def predict(model):
             
     prediction_category = POKEMON[prediction_index]
     
-    print("Prediction: " + prediction_category)
+    print("Top Prediction Value: " + str(top_prediction))
+    print("Prediction Values: " + str(prediction))
+    print("########################################")
+    print("Prediction: " + str(prediction_category))
+    print("########################################")
     
     # Display an image of the prediction vs actual
     #print("Images are displayed in a separate window")

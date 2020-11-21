@@ -9,18 +9,20 @@ def converter(directory):
             img: Image = Image.open(os.path.join(directory, fileName)).convert("RGB") 
             if (img != None): 
                 if (".jpg" in fileName): 
-                    img.save(directory + "/" + str(idx) + ".jpg", "jpeg") 
+                    img.save(os.path.join(directory, str(idx) + ".jpg"), "jpeg") 
                 elif (".jpeg" in fileName): 
-                    img.save(directory + "/" + str(idx) + ".jpg", "jpeg") 
+                    img.save(os.path.join(directory, str(idx) + ".jpg"), "jpeg") 
                 elif (".png" in fileName): 
-                    img.save(directory + "/" + str(idx) + ".jpg", "jpeg") 
+                    img.save(os.path.join(directory, str(idx) + ".jpg"), "jpeg") 
                 elif (".webp" in fileName): 
-                    img.save(directory + "/" + str(idx) + ".jpg", "jpeg") 
+                    img.save(os.path.join(directory, str(idx) + ".jpg"), "jpeg") 
                 
-                os.remove(directory + "/" + fileName)
+                #os.remove(os.path.join(directory, fileName))
+                idx += 1
+            else:
+                print(fileName + " failed to convert.")
+                os.remove(os.path.join(directory, fileName))
         else:
-            os.remove(directory + "/" + fileName) 
-        idx += 1
+            os.remove(os.path.join(directory, fileName))
 
-
-converter("pokemon/4")
+converter(os.path.join("pokemon", "4"))
